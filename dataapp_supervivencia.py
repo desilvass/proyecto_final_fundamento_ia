@@ -7,11 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from lifelines import KaplanMeierFitter
-from sklearn.ensemble import RandomForestClassifier
-import plotly.express as px
 import warnings
 
-# Configuración para suprimir advertencias
 warnings.filterwarnings('ignore')
 
 # Configuración de la página
@@ -24,16 +21,16 @@ st.set_page_config(
 
 @st.cache_data
 def cargar_datos():
-    """Cargar y procesar los datos - VERSIÓN STREAMLIT CLOUD"""
+    """Cargar datos REALES desde el archivo Excel"""
     try:
-        # PARA STREAMLIT CLOUD: Usa datos de ejemplo o sube el Excel a tu repositorio
-        # Si subes el archivo Excel, usa: 
+        # Ruta RELATIVA - el archivo está en el mismo repositorio
         base = pd.read_excel("linelist_case_data.xlsx", sheet_name="linelist_case_data")
-        
-                st.success(f"✅ Datos reales cargados: {len(base)} registros")
+        st.success(f"✅ Datos reales cargados: {len(base)} registros")
         return procesar_datos(base)
+        
     except Exception as e:
-        st.info("📊 No se encontró archivo Excel. Usando datos de ejemplo...")
+        st.error(f"❌ Error al cargar archivo Excel: {e}")
+        st.info("📊 Usando datos de ejemplo temporalmente...")
         return crear_datos_ejemplo()
 
 def procesar_datos(base):
@@ -81,7 +78,7 @@ def procesar_datos(base):
     return base
 
 def crear_datos_ejemplo():
-    """Crear datos de ejemplo para Streamlit Cloud"""
+    """Crear datos de ejemplo si no se puede cargar el archivo"""
     np.random.seed(42)
     n_pacientes = 500
     
@@ -397,14 +394,3 @@ def main():
 # Ejecutar la aplicación
 if __name__ == "__main__":
     main()
-
-# Footer
-st.markdown("---")
-st.markdown(
-    """
-    <div style='text-align: center; color: gray;'>
-    🏥 Sistema de Análisis de Supervivencia - Desarrollado para apoyo en decisiones clínicas
-    </div>
-    """,
-    unsafe_allow_html=True
-)
